@@ -6,6 +6,7 @@ import com.ceg.VirtualStore.products.application.dto.CreateProductDto;
 import com.ceg.VirtualStore.products.application.dto.UpdateProductDto;
 import com.ceg.VirtualStore.shared.command.CommandBus;
 import com.ceg.VirtualStore.shared.query.QueryBus;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class ProductController {
     private QueryBus queryBus;
 
     @PostMapping
-    public ResponseEntity createProduct(@RequestBody CreateProductDto createProductDto) throws Exception {
+    public ResponseEntity createProduct(@Valid @RequestBody CreateProductDto createProductDto) throws Exception {
         commandBus.handle(new CreateProductCommand(createProductDto.getName(), createProductDto.getPrice(), createProductDto.getStock(), createProductDto.getDescription()));
 
         return new ResponseEntity(HttpStatus.CREATED);

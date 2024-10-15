@@ -11,8 +11,11 @@ public class Order {
     private OrderStatus status;
     //  TotalItems
     //  TotalAmount
+    //  ProductIds
     //  CreatedDate
     //  UpdatedDate
+    //  ShippingAddress
+    //  UserPhone
     public UUID getOrderId() {
         return orderId;
     }

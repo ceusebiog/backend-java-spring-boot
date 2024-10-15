@@ -1,6 +1,9 @@
 package com.ceg.VirtualStore.products.application.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class CreateProductDto {
+    @NotNull(message = "The name param can't be null")
     private String name;
     private String description;
     private double price;
