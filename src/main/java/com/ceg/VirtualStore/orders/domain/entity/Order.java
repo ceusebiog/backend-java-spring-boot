@@ -26,11 +26,8 @@ public class Order {
     }
 
     public Order(UUID orderId, UUID userId, OrderStatus status) {
-        Optional<UUID> oOrderId = Optional.ofNullable(orderId);
-        Optional<OrderStatus> oStatus = Optional.ofNullable(status);
-
-        this.orderId = oOrderId.orElseGet(UUID::randomUUID);
+        this.orderId = orderId;
         this.userId = userId;
-        this.status = oStatus.orElse(OrderStatus.CREATED);
+        this.status = status;
     }
 }

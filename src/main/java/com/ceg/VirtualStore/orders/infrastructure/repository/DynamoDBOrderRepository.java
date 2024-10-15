@@ -5,14 +5,9 @@ import com.ceg.VirtualStore.orders.domain.repository.IOrderRepository;
 import com.ceg.VirtualStore.orders.domain.value_object.OrderStatus;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 public class DynamoDBOrderRepository implements IOrderRepository {
@@ -59,5 +54,40 @@ public class DynamoDBOrderRepository implements IOrderRepository {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public List<Order> findByUserId(String userId){
+        Map<String, String> expressionAttributeNames = new HashMap<>();
+        expressionAttributeNames.put("#userId","userId");
+
+        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
+        expressionAttributeValues.put(":userIdValue", AttributeValue.builder().s(userId).build());
+
+        QueryRequest request = QueryRequest.builder()
+                .tableName(this.tableName)
+                .indexName("UserIdIndex")
+                .keyConditionExpression("#userId = :userIdValue")
+                .expressionAttributeNames(expressionAttributeNames)
+                .expressionAttributeValues(expressionAttributeValues)
+                .build();
+
+        QueryResponse response = dynamoDbClient.query(request);
+
+        if (response.hasItems()) {
+            List<Order> orderList = new ArrayList<>();
+
+            for (Map<String, AttributeValue> item: response.items()){
+                orderList.add(new Order(
+                        UUID.fromString(item.get("orderId").s()),
+                        UUID.fromString(item.get("userId").s()),
+                        OrderStatus.valueOf(item.get("status").s())
+                ));
+            }
+
+            return orderList;
+        }
+
+        return List.of();
     }
 }
