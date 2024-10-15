@@ -16,7 +16,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/orders", produces = "application/json")
+@RequestMapping(path = "/api/order", produces = "application/json")
 public class OrderController {
 
     @Autowired
@@ -26,11 +26,10 @@ public class OrderController {
     private QueryBus queryBus;
 
     @PostMapping
-    @ResponseBody
     public ResponseEntity createOrder(@RequestBody CreateOrderDto createOrderDto) throws Exception {
         commandBus.handle(new CreateOrderCommand(createOrderDto.getUserId()));
 
-        return ResponseEntity.created(URI.create("")).build();
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping("/details/{orderId}")
@@ -41,7 +40,7 @@ public class OrderController {
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     @ResponseBody
     public ResponseEntity<Object> getOrdersByUser(@PathVariable("userId") String userId) throws Exception {
         List<Order> orderList = queryBus.handle(new GetOrdersByUserQuery(userId));

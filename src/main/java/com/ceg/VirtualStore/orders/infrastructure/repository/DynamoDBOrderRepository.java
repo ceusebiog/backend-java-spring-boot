@@ -30,7 +30,6 @@ public class DynamoDBOrderRepository implements IOrderRepository {
                 .build();
 
         dynamoDbClient.putItem(request);
-        System.out.println("created db");
     }
 
     @Override
